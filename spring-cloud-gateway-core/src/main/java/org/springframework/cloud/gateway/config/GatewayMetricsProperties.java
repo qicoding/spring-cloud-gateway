@@ -25,6 +25,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 /**
+ * 网关度量监控配置 tag映射
  * @author Ingyu Hwang
  */
 @ConfigurationProperties("spring.cloud.gateway.metrics")

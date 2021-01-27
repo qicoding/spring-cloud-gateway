@@ -33,6 +33,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.DispatcherHandler;
 
 /**
+ * hystrix 服务降级熔断支持
+ *
  * @author Ryan Baxter
  */
 @Configuration(proxyBeanMethods = false)

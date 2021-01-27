@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 /**
+ * 网关路由端点实现类
  * @author Spencer Gibb
  */
 @RestControllerEndpoint(id = "gateway")
@@ -52,6 +53,11 @@ public class GatewayControllerEndpoint extends AbstractGatewayControllerEndpoint
 	}
 
 	// TODO: Flush out routes without a definition
+
+	/**
+	 * 获取路由
+	 * @return
+	 */
 	@GetMapping("/routes")
 	public Flux<Map<String, Object>> routes() {
 		return this.routeLocator.getRoutes().map(this::serialize);
@@ -78,6 +84,11 @@ public class GatewayControllerEndpoint extends AbstractGatewayControllerEndpoint
 		return r;
 	}
 
+	/**
+	 * 根据ID获取单个路由
+	 * @param id
+	 * @return
+	 */
 	@GetMapping("/routes/{id}")
 	public Mono<ResponseEntity<Map<String, Object>>> route(@PathVariable String id) {
 		// @formatter:off

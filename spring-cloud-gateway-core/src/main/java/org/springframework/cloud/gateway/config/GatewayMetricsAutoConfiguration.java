@@ -38,6 +38,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.DispatcherHandler;
 
+/**
+ * 网关度量监控自动装配
+ */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = "spring.cloud.gateway.enabled", matchIfMissing = true)
 @EnableConfigurationProperties(GatewayMetricsProperties.class)
@@ -64,6 +67,12 @@ public class GatewayMetricsAutoConfiguration {
 		return new PropertiesTagsProvider(gatewayMetricsProperties.getTags());
 	}
 
+	/**
+	 * 网关度量监控过滤器
+	 * @param meterRegistry
+	 * @param tagsProviders
+	 * @return
+	 */
 	@Bean
 	@ConditionalOnBean(MeterRegistry.class)
 	@ConditionalOnProperty(name = "spring.cloud.gateway.metrics.enabled",

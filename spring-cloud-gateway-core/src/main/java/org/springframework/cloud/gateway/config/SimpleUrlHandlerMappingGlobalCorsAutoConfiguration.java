@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
 
 /**
+ * URLMapping 配置
  * This is useful for PreFlight CORS requests. We can add a "global" configuration here so
  * we don't have to modify existing predicates to allow the "options" HTTP method.
  *

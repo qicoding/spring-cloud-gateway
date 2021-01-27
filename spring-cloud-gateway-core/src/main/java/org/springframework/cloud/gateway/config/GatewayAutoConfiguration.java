@@ -161,6 +161,7 @@ import static org.springframework.cloud.gateway.config.HttpClientProperties.Pool
 import static org.springframework.cloud.gateway.config.HttpClientProperties.Pool.PoolType.FIXED;
 
 /**
+ * 网关自动转配类
  * @author Spencer Gibb
  * @author Ziemowit Stolarczyk
  */
@@ -174,17 +175,32 @@ import static org.springframework.cloud.gateway.config.HttpClientProperties.Pool
 @ConditionalOnClass(DispatcherHandler.class)
 public class GatewayAutoConfiguration {
 
+	/**
+	 * String时间类型转换为ZonedDateTime时间类型的转换bean
+	 * @return
+	 */
 	@Bean
 	public StringToZonedDateTimeConverter stringToZonedDateTimeConverter() {
 		return new StringToZonedDateTimeConverter();
 	}
 
+	/**
+	 * 路由定位器builder的bean
+	 * @param context
+	 * @return
+	 */
 	@Bean
 	public RouteLocatorBuilder routeLocatorBuilder(
 			ConfigurableApplicationContext context) {
 		return new RouteLocatorBuilder(context);
 	}
 
+	/**
+	 * properties路由定义定位器bean（主要作用是读取路由的配置信息）
+	 * ConditionalOnMissingBean是修饰bean的一个注解，意思是该bean没被初始化，则会初始化，如果指定了value且为父类接口，则说明外部可以继承该覆盖覆盖该bean。
+	 * @param properties
+	 * @return
+	 */
 	@Bean
 	@ConditionalOnMissingBean
 	public PropertiesRouteDefinitionLocator propertiesRouteDefinitionLocator(
@@ -192,12 +208,21 @@ public class GatewayAutoConfiguration {
 		return new PropertiesRouteDefinitionLocator(properties);
 	}
 
+	/**
+	 * 内存路由存储bean 动态路由的关键（可以继承RouteDefinitionRepository自定义自己的动态路由覆盖此路由）
+	 * @return
+	 */
 	@Bean
 	@ConditionalOnMissingBean(RouteDefinitionRepository.class)
 	public InMemoryRouteDefinitionRepository inMemoryRouteDefinitionRepository() {
 		return new InMemoryRouteDefinitionRepository();
 	}
 
+	/**
+	 * 路由定义定位器bean
+	 * @param routeDefinitionLocators
+	 * @return
+	 */
 	@Bean
 	@Primary
 	public RouteDefinitionLocator routeDefinitionLocator(
@@ -206,6 +231,13 @@ public class GatewayAutoConfiguration {
 				Flux.fromIterable(routeDefinitionLocators));
 	}
 
+	/**
+	 * 配置服务bean
+	 * @param beanFactory
+	 * @param conversionService
+	 * @param validator
+	 * @return
+	 */
 	@Bean
 	public ConfigurationService gatewayConfigurationService(BeanFactory beanFactory,
 			@Qualifier("webFluxConversionService") ObjectProvider<ConversionService> conversionService,
@@ -213,6 +245,15 @@ public class GatewayAutoConfiguration {
 		return new ConfigurationService(beanFactory, conversionService, validator);
 	}
 
+	/**
+	 * 路由定位器bean
+	 * @param properties
+	 * @param gatewayFilters
+	 * @param predicates
+	 * @param routeDefinitionLocator
+	 * @param configurationService
+	 * @return
+	 */
 	@Bean
 	public RouteLocator routeDefinitionRouteLocator(GatewayProperties properties,
 			List<GatewayFilterFactory> gatewayFilters,
@@ -223,6 +264,11 @@ public class GatewayAutoConfiguration {
 				gatewayFilters, properties, configurationService);
 	}
 
+	/**
+	 * 缓存路由定位器bean 对路由定位器做了附加功能的包装 对外提供服务
+	 * @param routeLocators
+	 * @return
+	 */
 	@Bean
 	@Primary
 	@ConditionalOnMissingBean(name = "cachedCompositeRouteLocator")
@@ -232,22 +278,44 @@ public class GatewayAutoConfiguration {
 				new CompositeRouteLocator(Flux.fromIterable(routeLocators)));
 	}
 
+	/**
+	 * 路由刷新监听bean
+	 * @param publisher
+	 * @return
+	 */
 	@Bean
 	public RouteRefreshListener routeRefreshListener(
 			ApplicationEventPublisher publisher) {
 		return new RouteRefreshListener(publisher);
 	}
 
+	/**
+	 * 处理请求的全局过滤器链的web过滤器bean
+	 * @param globalFilters
+	 * @return
+	 */
 	@Bean
 	public FilteringWebHandler filteringWebHandler(List<GlobalFilter> globalFilters) {
 		return new FilteringWebHandler(globalFilters);
 	}
 
+	/**
+	 * 网关跨域配置bean
+	 * @return
+	 */
 	@Bean
 	public GlobalCorsProperties globalCorsProperties() {
 		return new GlobalCorsProperties();
 	}
 
+	/**
+	 * 路由匹配bean
+	 * @param webHandler
+	 * @param routeLocator
+	 * @param globalCorsProperties
+	 * @param environment
+	 * @return
+	 */
 	@Bean
 	public RoutePredicateHandlerMapping routePredicateHandlerMapping(
 			FilteringWebHandler webHandler, RouteLocator routeLocator,
@@ -256,6 +324,10 @@ public class GatewayAutoConfiguration {
 				globalCorsProperties, environment);
 	}
 
+	/**
+	 * 网关配置bean
+	 * @return
+	 */
 	@Bean
 	public GatewayProperties gatewayProperties() {
 		return new GatewayProperties();
@@ -263,11 +335,19 @@ public class GatewayAutoConfiguration {
 
 	// ConfigurationProperty beans
 
+	/**
+	 * 安全相关的响应头配置bean
+	 * @return
+	 */
 	@Bean
 	public SecureHeadersProperties secureHeadersProperties() {
 		return new SecureHeadersProperties();
 	}
 
+	/**
+	 * 支持Forwarded标头的filter bean doc：https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Forwarded
+	 * @return
+	 */
 	@Bean
 	@ConditionalOnProperty(name = "spring.cloud.gateway.forwarded.enabled",
 			matchIfMissing = true)
@@ -277,11 +357,19 @@ public class GatewayAutoConfiguration {
 
 	// HttpHeaderFilter beans
 
+	/**
+	 * 移除request或response中指定的header的filter bean
+	 * @return
+	 */
 	@Bean
 	public RemoveHopByHopHeadersFilter removeHopByHopHeadersFilter() {
 		return new RemoveHopByHopHeadersFilter();
 	}
 
+	/**
+	 * x-forwarded头的支持filter bean
+	 * @return
+	 */
 	@Bean
 	@ConditionalOnProperty(name = "spring.cloud.gateway.x-forwarded.enabled",
 			matchIfMissing = true)
@@ -289,40 +377,73 @@ public class GatewayAutoConfiguration {
 		return new XForwardedHeadersFilter();
 	}
 
-	// GlobalFilter beans
+	// 以下是全局过滤器bean
 
+	/**
+	 * 全局过滤器 - 缓存请求body
+	 * @return
+	 */
 	@Bean
 	public AdaptCachedBodyGlobalFilter adaptCachedBodyGlobalFilter() {
 		return new AdaptCachedBodyGlobalFilter();
 	}
 
+	/**
+	 * 全局过滤器 - 清除缓存的请求body
+	 * @return
+	 */
 	@Bean
 	public RemoveCachedBodyFilter removeCachedBodyFilter() {
 		return new RemoveCachedBodyFilter();
 	}
 
+	/**
+	 * 全局过滤器 - 从Route建新的URI并暂存GATEWAY_REQUEST_URL_ATTR 中
+	 * @return
+	 */
 	@Bean
 	public RouteToRequestUrlFilter routeToRequestUrlFilter() {
 		return new RouteToRequestUrlFilter();
 	}
 
+	/**
+	 * 全局过滤器 - 转发路由过滤器bean
+	 * @param dispatcherHandler
+	 * @return
+	 */
 	@Bean
 	public ForwardRoutingFilter forwardRoutingFilter(
 			ObjectProvider<DispatcherHandler> dispatcherHandler) {
 		return new ForwardRoutingFilter(dispatcherHandler);
 	}
 
+	/**
+	 * 全局过滤器 - 转发path过滤器 bean
+	 * @return
+	 */
 	@Bean
 	public ForwardPathFilter forwardPathFilter() {
 		return new ForwardPathFilter();
 	}
 
+	/**
+	 * websocket service bean
+	 * @param requestUpgradeStrategy
+	 * @return
+	 */
 	@Bean
 	public WebSocketService webSocketService(
 			RequestUpgradeStrategy requestUpgradeStrategy) {
 		return new HandshakeWebSocketService(requestUpgradeStrategy);
 	}
 
+	/**
+	 * 全局过滤器 - websocket路由过滤器
+	 * @param webSocketClient
+	 * @param webSocketService
+	 * @param headersFilters
+	 * @return
+	 */
 	@Bean
 	public WebsocketRoutingFilter websocketRoutingFilter(WebSocketClient webSocketClient,
 			WebSocketService webSocketService,
@@ -331,6 +452,12 @@ public class GatewayAutoConfiguration {
 				headersFilters);
 	}
 
+	/**
+	 * 权重计算Web过滤器
+	 * @param configurationService
+	 * @param routeLocator
+	 * @return
+	 */
 	@Bean
 	public WeightCalculatorWebFilter weightCalculatorWebFilter(
 			ConfigurationService configurationService,
@@ -348,6 +475,7 @@ public class GatewayAutoConfiguration {
 	 */
 
 	// Predicate Factory beans
+	// 以下是谓词工厂 beans
 
 	@Bean
 	public AfterRoutePredicateFactory afterRoutePredicateFactory() {
@@ -417,6 +545,7 @@ public class GatewayAutoConfiguration {
 	}
 
 	// GatewayFilter Factory beans
+	// 以下是路由过滤器 beans
 
 	@Bean
 	public AddRequestHeaderGatewayFilterFactory addRequestHeaderGatewayFilterFactory() {
@@ -718,11 +847,22 @@ public class GatewayAutoConfiguration {
 			return httpClient;
 		}
 
+		/**
+		 * http 客户端配置
+		 * @return
+		 */
 		@Bean
 		public HttpClientProperties httpClientProperties() {
 			return new HttpClientProperties();
 		}
 
+		/**
+		 * 全局过滤器 - netty路由过滤器
+		 * @param httpClient
+		 * @param headersFilters
+		 * @param properties
+		 * @return
+		 */
 		@Bean
 		public NettyRoutingFilter routingFilter(HttpClient httpClient,
 				ObjectProvider<List<HttpHeadersFilter>> headersFilters,
@@ -730,12 +870,23 @@ public class GatewayAutoConfiguration {
 			return new NettyRoutingFilter(httpClient, headersFilters, properties);
 		}
 
+		/**
+		 * 全局过滤器 - netty写响应过滤器
+		 * @param properties
+		 * @return
+		 */
 		@Bean
 		public NettyWriteResponseFilter nettyWriteResponseFilter(
 				GatewayProperties properties) {
 			return new NettyWriteResponseFilter(properties.getStreamingMediaTypes());
 		}
 
+		/**
+		 * netty websocket 客户端
+		 * @param properties
+		 * @param httpClient
+		 * @return
+		 */
 		@Bean
 		public ReactorNettyWebSocketClient reactorNettyWebSocketClient(
 				HttpClientProperties properties, HttpClient httpClient) {
@@ -749,6 +900,11 @@ public class GatewayAutoConfiguration {
 			return webSocketClient;
 		}
 
+		/**
+		 * netty请求升级策略
+		 * @param httpClientProperties
+		 * @return
+		 */
 		@Bean
 		public ReactorNettyRequestUpgradeStrategy reactorNettyRequestUpgradeStrategy(
 				HttpClientProperties httpClientProperties) {
@@ -765,6 +921,9 @@ public class GatewayAutoConfiguration {
 
 	}
 
+	/**
+	 * hystrix相关配置支持
+	 */
 	@Configuration(proxyBeanMethods = false)
 	@ConditionalOnClass({ HystrixObservableCommand.class, RxReactiveStreams.class })
 	protected static class HystrixConfiguration {
@@ -783,10 +942,22 @@ public class GatewayAutoConfiguration {
 
 	}
 
+	/**
+	 * actuator相关配置
+	 */
 	@Configuration(proxyBeanMethods = false)
 	@ConditionalOnClass(Health.class)
 	protected static class GatewayActuatorConfiguration {
 
+		/**
+		 * 默认的端点实现
+		 * @param globalFilters
+		 * @param gatewayFilters
+		 * @param routePredicates
+		 * @param routeDefinitionWriter
+		 * @param routeLocator
+		 * @return
+		 */
 		@Bean
 		@ConditionalOnProperty(name = "spring.cloud.gateway.actuator.verbose.enabled",
 				matchIfMissing = true)
@@ -800,6 +971,16 @@ public class GatewayAutoConfiguration {
 					routePredicates, routeDefinitionWriter, routeLocator);
 		}
 
+		/**
+		 * 仅当 spring.cloud.gateway.actuator.verbose.enabled 为 false 才会使用该端点实现
+		 * @param routeDefinitionLocator
+		 * @param globalFilters
+		 * @param gatewayFilters
+		 * @param routePredicates
+		 * @param routeDefinitionWriter
+		 * @param routeLocator
+		 * @return
+		 */
 		@Bean
 		@Conditional(OnVerboseDisabledCondition.class)
 		@ConditionalOnAvailableEndpoint

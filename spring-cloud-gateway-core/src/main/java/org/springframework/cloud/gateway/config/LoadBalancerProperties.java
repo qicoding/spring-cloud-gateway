@@ -19,6 +19,7 @@ package org.springframework.cloud.gateway.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * 负载均衡配置
  * @author Ryan Baxter
  */
 @ConfigurationProperties("spring.cloud.gateway.loadbalancer")

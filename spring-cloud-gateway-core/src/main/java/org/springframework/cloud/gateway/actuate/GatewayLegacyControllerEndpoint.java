@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 /**
+ * 网关路由端点实现类 -- 旧实现类 默认不会使用该实现
  * @author Spencer Gibb
  */
 @RestControllerEndpoint(id = "gateway")
@@ -52,6 +53,10 @@ public class GatewayLegacyControllerEndpoint extends AbstractGatewayControllerEn
 				routeDefinitionWriter, routeLocator);
 	}
 
+	/**
+	 * 获取路由
+	 * @return
+	 */
 	@GetMapping("/routes")
 	public Mono<List<Map<String, Object>>> routes() {
 		Mono<Map<String, RouteDefinition>> routeDefs = this.routeDefinitionLocator
@@ -99,6 +104,10 @@ public class GatewayLegacyControllerEndpoint extends AbstractGatewayControllerEn
 		});
 	}
 
+	/**
+	 * 根据ID获取单个路由
+	 * @return
+	 */
 	@GetMapping("/routes/{id}")
 	public Mono<ResponseEntity<RouteDefinition>> route(@PathVariable String id) {
 		// TODO: missing RouteLocator

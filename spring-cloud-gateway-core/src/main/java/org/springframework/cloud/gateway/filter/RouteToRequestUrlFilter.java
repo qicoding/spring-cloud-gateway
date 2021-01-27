@@ -34,6 +34,9 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.G
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.containsEncodedParts;
 
 /**
+ * 如果ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR的exchange属性中存在Route对象，则RouteToRequestUrlFilter将运行。
+ * 它基于请求URI创建一个新URI，但使用Route对象的URI属性进行更新。
+ * 新的URI放置在ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR的exchange属性中。
  * @author Spencer Gibb
  */
 public class RouteToRequestUrlFilter implements GlobalFilter, Ordered {

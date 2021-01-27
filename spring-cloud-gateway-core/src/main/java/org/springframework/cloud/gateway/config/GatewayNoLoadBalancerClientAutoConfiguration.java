@@ -39,6 +39,7 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.G
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_SCHEME_PREFIX_ATTR;
 
 /**
+ * 网关无负载均衡客户端自动装配
  * @author Spencer Gibb
  */
 @Configuration(proxyBeanMethods = false)

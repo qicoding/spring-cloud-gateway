@@ -30,6 +30,12 @@ import org.springframework.web.server.ServerWebExchange;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.isAlreadyRouted;
 
+/**
+ * ForwardRoutingFilter在exchange属性ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR中查找URI。
+ * 如果URL具有转发scheme（例如forward:/// localendpoint），则它将使用Spring DispatcherHandler来处理请求。
+ * 请求URL的路径部分被转发URL中的路径覆盖。
+ * 未经修改的原始URL会附加到ServerWebExchangeUtils.GATEWAY_ORIGINAL_REQUEST_URL_ATTR属性中的列表中。
+ */
 public class ForwardRoutingFilter implements GlobalFilter, Ordered {
 
 	private static final Log log = LogFactory.getLog(ForwardRoutingFilter.class);

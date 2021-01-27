@@ -38,6 +38,9 @@ import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.web.reactive.DispatcherHandler;
 
+/**
+ * redis配置 含限流lua脚本
+ */
 @Configuration(proxyBeanMethods = false)
 @AutoConfigureAfter(RedisReactiveAutoConfiguration.class)
 @AutoConfigureBefore(GatewayAutoConfiguration.class)

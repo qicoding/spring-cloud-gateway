@@ -32,6 +32,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.DispatcherHandler;
 
 /**
+ * Resilience4J限流熔断支持
  * @author Ryan Baxter
  */
 @Configuration(proxyBeanMethods = false)

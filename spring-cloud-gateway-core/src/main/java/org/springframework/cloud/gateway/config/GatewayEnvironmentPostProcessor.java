@@ -23,6 +23,9 @@ import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 
+/**
+ * 隐式修改配置
+ */
 public class GatewayEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
 	@Override

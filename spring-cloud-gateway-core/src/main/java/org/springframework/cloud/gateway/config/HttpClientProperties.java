@@ -45,6 +45,7 @@ import org.springframework.util.unit.DataSize;
 import org.springframework.validation.annotation.Validated;
 
 /**
+ * http 客户端配置
  * Configuration properties for the Netty {@link reactor.netty.http.client.HttpClient}.
  */
 @ConfigurationProperties("spring.cloud.gateway.httpclient")

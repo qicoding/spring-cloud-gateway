@@ -35,6 +35,10 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
 
 /**
+ * 该过滤器主要用于做网关度量监控的，要启用，需添加spring-boot-starter-actuator依赖。
+ * 然后，默认情况下，只要属性spring.cloud.gateway.metrics.enabled未设置为false，GatewayMetricsFilter就会运行。
+ * 这些指标随后可从/actuator/metrics/gateway.requests中进行抓取
+ *
  * @author Tony Clarke
  * @author Ingyu Hwang
  */

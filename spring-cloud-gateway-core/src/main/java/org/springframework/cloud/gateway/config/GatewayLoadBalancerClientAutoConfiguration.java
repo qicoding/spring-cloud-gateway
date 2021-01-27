@@ -30,6 +30,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.DispatcherHandler;
 
 /**
+ * 网关负载均衡客户端自动装配
  * AutoConfiguration for {@link LoadBalancerClientFilter}.
  *
  * @author Spencer Gibb

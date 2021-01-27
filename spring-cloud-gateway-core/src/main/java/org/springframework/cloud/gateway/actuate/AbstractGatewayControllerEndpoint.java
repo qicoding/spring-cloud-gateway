@@ -45,23 +45,44 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 /**
+ * 网关端点抽象类
+ *
  * @author Spencer Gibb
  */
 public class AbstractGatewayControllerEndpoint implements ApplicationEventPublisherAware {
 
 	private static final Log log = LogFactory.getLog(GatewayControllerEndpoint.class);
 
+	/**
+	 * 路由定义定位器
+	 */
 	protected RouteDefinitionLocator routeDefinitionLocator;
 
+	/**
+	 * 全局过滤器
+	 */
 	protected List<GlobalFilter> globalFilters;
 
+	/**
+	 * 路由过滤器
+	 */
 	// TODO change casing in next major release
 	protected List<GatewayFilterFactory> GatewayFilters;
 
+	/**
+	 * 谓词工厂
+	 */
 	protected List<RoutePredicateFactory> routePredicates;
 
+	/**
+	 * 路由定义写入类
+	 */
 	protected RouteDefinitionWriter routeDefinitionWriter;
 
+
+	/**
+	 * 路由定位器
+	 */
 	protected RouteLocator routeLocator;
 
 	protected ApplicationEventPublisher publisher;
@@ -86,22 +107,38 @@ public class AbstractGatewayControllerEndpoint implements ApplicationEventPublis
 
 	// TODO: Add uncommited or new but not active routes endpoint
 
+	/**
+	 * 触发刷新路由事件
+	 * @return
+	 */
 	@PostMapping("/refresh")
 	public Mono<Void> refresh() {
 		this.publisher.publishEvent(new RefreshRoutesEvent(this));
 		return Mono.empty();
 	}
 
+	/**
+	 * 获取全局过滤器
+	 * @return
+	 */
 	@GetMapping("/globalfilters")
 	public Mono<HashMap<String, Object>> globalfilters() {
 		return getNamesToOrders(this.globalFilters);
 	}
 
+	/**
+	 * 获取路由过滤器
+	 * @return
+	 */
 	@GetMapping("/routefilters")
 	public Mono<HashMap<String, Object>> routefilers() {
 		return getNamesToOrders(this.GatewayFilters);
 	}
 
+	/**
+	 * 获取谓词工厂
+	 * @return
+	 */
 	@GetMapping("/routepredicates")
 	public Mono<HashMap<String, Object>> routepredicates() {
 		return getNamesToOrders(this.routePredicates);
@@ -111,8 +148,15 @@ public class AbstractGatewayControllerEndpoint implements ApplicationEventPublis
 		return Flux.fromIterable(list).reduce(new HashMap<>(), this::putItem);
 	}
 
+	/**
+	 * 合并Object的方法
+	 * @param map
+	 * @param o
+	 * @return 返回合并之后的类的顺序map
+	 */
 	private HashMap<String, Object> putItem(HashMap<String, Object> map, Object o) {
 		Integer order = null;
+		// 如果有继承 Ordered接口 则获取到order
 		if (o instanceof Ordered) {
 			order = ((Ordered) o).getOrder();
 		}
@@ -159,6 +203,10 @@ public class AbstractGatewayControllerEndpoint implements ApplicationEventPublis
 		return hasValidFilterDefinitions && hasValidPredicateDefinitions;
 	}
 
+	/**
+	 * 根据ID删除路由
+	 * @return
+	 */
 	@DeleteMapping("/routes/{id}")
 	public Mono<ResponseEntity<Object>> delete(@PathVariable String id) {
 		return this.routeDefinitionWriter.delete(Mono.just(id))
@@ -167,6 +215,10 @@ public class AbstractGatewayControllerEndpoint implements ApplicationEventPublis
 						t -> Mono.just(ResponseEntity.notFound().build()));
 	}
 
+	/**
+	 * 根据ID 合并相同路由ID的路由过滤器
+	 * @return
+	 */
 	@GetMapping("/routes/{id}/combinedfilters")
 	public Mono<HashMap<String, Object>> combinedfilters(@PathVariable String id) {
 		// TODO: missing global filters
