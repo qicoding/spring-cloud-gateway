@@ -43,6 +43,7 @@ import static org.springframework.cloud.gateway.support.NameUtils.normalizeFilte
 import static org.springframework.cloud.gateway.support.NameUtils.normalizeRoutePredicateName;
 
 /**
+ * 网关服务发现客户端自动装配类
  * @author Spencer Gibb
  */
 @Configuration(proxyBeanMethods = false)
@@ -53,6 +54,10 @@ import static org.springframework.cloud.gateway.support.NameUtils.normalizeRoute
 @EnableConfigurationProperties
 public class GatewayDiscoveryClientAutoConfiguration {
 
+	/**
+	 * 初始化一个默认的谓词定义
+	 * @return
+	 */
 	public static List<PredicateDefinition> initPredicates() {
 		ArrayList<PredicateDefinition> definitions = new ArrayList<>();
 		// TODO: add a predicate that matches the url at /serviceId?
@@ -65,6 +70,10 @@ public class GatewayDiscoveryClientAutoConfiguration {
 		return definitions;
 	}
 
+	/**
+	 * 初始化一个默认的过滤器
+	 * @return
+	 */
 	public static List<FilterDefinition> initFilters() {
 		ArrayList<FilterDefinition> definitions = new ArrayList<>();
 
@@ -80,6 +89,10 @@ public class GatewayDiscoveryClientAutoConfiguration {
 		return definitions;
 	}
 
+	/**
+	 * 服务发现配置参数bean
+	 * @return
+	 */
 	@Bean
 	public DiscoveryLocatorProperties discoveryLocatorProperties() {
 		DiscoveryLocatorProperties properties = new DiscoveryLocatorProperties();
@@ -93,6 +106,12 @@ public class GatewayDiscoveryClientAutoConfiguration {
 			matchIfMissing = true)
 	public static class ReactiveDiscoveryClientRouteDefinitionLocatorConfiguration {
 
+		/**
+		 * 服务发现客户端路由定义定位器bean
+		 * @param discoveryClient
+		 * @param properties
+		 * @return
+		 */
 		@Bean
 		@ConditionalOnProperty(name = "spring.cloud.gateway.discovery.locator.enabled")
 		public DiscoveryClientRouteDefinitionLocator discoveryClientRouteDefinitionLocator(
@@ -112,6 +131,12 @@ public class GatewayDiscoveryClientAutoConfiguration {
 			havingValue = "false")
 	public static class BlockingDiscoveryClientRouteDefinitionLocatorConfiguration {
 
+		/**
+		 * 阻塞的服务发现客户端路由定义定位器
+		 * @param discoveryClient
+		 * @param properties
+		 * @return
+		 */
 		@Bean
 		@ConditionalOnProperty(name = "spring.cloud.gateway.discovery.locator.enabled")
 		public DiscoveryClientRouteDefinitionLocator discoveryClientRouteDefinitionLocator(

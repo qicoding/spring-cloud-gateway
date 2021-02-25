@@ -41,3 +41,4 @@ logging:
     reactor.netty: DEBUG
 
 management.endpoints.web.exposure.include: '*'
+# spring.cloud.gateway.actuator.verbose.enabled: false
