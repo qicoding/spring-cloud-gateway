@@ -19,6 +19,14 @@ package org.springframework.cloud.gateway.event;
 import org.springframework.context.ApplicationEvent;
 
 /**
+ * 刷新路由事件
+ *
+ * 可由网关端点AbstractGatewayControllerEndpoint刷新接口端点 触发
+ * 或者由RouteRefreshListener重置时触发
+ *
+ * 缓存路由定位CachingRouteLocator中订阅事件并处理刷新缓存
+ *
+ *
  * @author Spencer Gibb
  */
 public class RefreshRoutesEvent extends ApplicationEvent {

@@ -71,10 +71,15 @@ public abstract class AbstractRateLimiter<C> extends AbstractStatefulConfigurabl
 		this.configurationService = configurationService;
 	}
 
+	/**
+	 * 监听处理过滤器参数事件
+	 * @param event
+	 */
 	@Override
 	public void onApplicationEvent(FilterArgsEvent event) {
 		Map<String, Object> args = event.getArgs();
 
+		// 如果参数为空 或者 不包含限流相关参数 则直接返回
 		if (args.isEmpty() || !hasRelevantKey(args)) {
 			return;
 		}
@@ -90,6 +95,11 @@ public abstract class AbstractRateLimiter<C> extends AbstractStatefulConfigurabl
 		getConfig().put(routeId, routeConfig);
 	}
 
+	/**
+	 * 判断是否包含限流相关参数
+	 * @param args
+	 * @return
+	 */
 	private boolean hasRelevantKey(Map<String, Object> args) {
 		return args.keySet().stream()
 				.anyMatch(key -> key.startsWith(configurationPropertyName + "."));

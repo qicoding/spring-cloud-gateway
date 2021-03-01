@@ -28,6 +28,7 @@ import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
 import org.springframework.context.ApplicationListener;
 
 /**
+ * 缓存路由定义定位器
  * @author Spencer Gibb
  */
 public class CachingRouteDefinitionLocator

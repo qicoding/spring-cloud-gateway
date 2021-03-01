@@ -20,6 +20,13 @@ import java.util.Map;
 
 import org.springframework.context.ApplicationEvent;
 
+/**
+ * 路由谓词参数事件
+ *
+ * 由路由定义定位器RouteDefinitionRouteLocator中转换路由谓词的时候发送事件（主要是权重相关的）
+ * 在权重计算web过滤器WeightCalculatorWebFilter中监听事件并处理事件（非权重相关参数不处理直接返回）
+ *
+ */
 public class PredicateArgsEvent extends ApplicationEvent {
 
 	private final Map<String, Object> args;

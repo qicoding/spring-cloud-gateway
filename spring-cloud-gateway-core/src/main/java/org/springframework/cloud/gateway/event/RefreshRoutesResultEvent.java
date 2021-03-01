@@ -19,6 +19,9 @@ package org.springframework.cloud.gateway.event;
 import org.springframework.context.ApplicationEvent;
 
 /**
+ * 路由刷新结果事件
+ * 由缓存路由定位CachingRouteLocator处理刷新路由事件时触发的结果事件
+ *
  * @author alvin
  */
 public class RefreshRoutesResultEvent extends ApplicationEvent {

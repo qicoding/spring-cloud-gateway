@@ -47,6 +47,7 @@ import org.springframework.web.server.WebFilterChain;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.WEIGHT_ATTR;
 
 /**
+ * 权重计算Web过滤器
  * @author Spencer Gibb
  * @author Alexey Nakidkin
  */
@@ -141,6 +142,7 @@ public class WeightCalculatorWebFilter
 		else if (event instanceof WeightDefinedEvent) {
 			addWeightConfig(((WeightDefinedEvent) event).getWeightConfig());
 		}
+		// 如果是刷新路由事件 强制初始化路由
 		else if (event instanceof RefreshRoutesEvent && routeLocator != null) {
 			// forces initialization
 			routeLocator.ifAvailable(locator -> locator.getRoutes().subscribe());
@@ -148,9 +150,13 @@ public class WeightCalculatorWebFilter
 
 	}
 
+	/**
+	 * 处理谓词参数事件
+	 * @param event
+	 */
 	public void handle(PredicateArgsEvent event) {
 		Map<String, Object> args = event.getArgs();
-
+		// 参数为空 或者 不包含权重参数 直接返回
 		if (args.isEmpty() || !hasRelevantKey(args)) {
 			return;
 		}
@@ -163,6 +169,11 @@ public class WeightCalculatorWebFilter
 		addWeightConfig(config);
 	}
 
+	/**
+	 * 判断参数是否包含权重参数
+	 * @param args
+	 * @return
+	 */
 	private boolean hasRelevantKey(Map<String, Object> args) {
 		return args.keySet().stream()
 				.anyMatch(key -> key.startsWith(WeightConfig.CONFIG_PREFIX + "."));

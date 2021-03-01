@@ -20,6 +20,11 @@ import java.util.Map;
 
 import org.springframework.context.ApplicationEvent;
 
+/**
+ * 过滤器参数事件
+ * 由路由定义定位器RouteDefinitionRouteLocator中加载路由过滤器的时候发送事件（主要是限流相关的）
+ * 在限流抽象类AbstractRateLimiter中监听事件并处理事件（非限流相关参数不处理直接返回）
+ */
 public class FilterArgsEvent extends ApplicationEvent {
 
 	private final Map<String, Object> args;

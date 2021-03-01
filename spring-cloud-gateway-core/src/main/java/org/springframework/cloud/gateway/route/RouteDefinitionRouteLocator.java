@@ -238,6 +238,11 @@ public class RouteDefinitionRouteLocator
 		return filters;
 	}
 
+	/**
+	 * 合并谓词
+	 * @param routeDefinition
+	 * @return
+	 */
 	private AsyncPredicate<ServerWebExchange> combinePredicates(
 			RouteDefinition routeDefinition) {
 		List<PredicateDefinition> predicates = routeDefinition.getPredicates();
@@ -245,9 +250,11 @@ public class RouteDefinitionRouteLocator
 			// this is a very rare case, but possible, just match all
 			return AsyncPredicate.from(exchange -> true);
 		}
+		// 取第一个路由谓词
 		AsyncPredicate<ServerWebExchange> predicate = lookup(routeDefinition,
 				predicates.get(0));
 
+		// 其他路由谓词并通过and关系合并
 		for (PredicateDefinition andPredicate : predicates.subList(1,
 				predicates.size())) {
 			AsyncPredicate<ServerWebExchange> found = lookup(routeDefinition,

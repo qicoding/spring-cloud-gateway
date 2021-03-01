@@ -18,6 +18,12 @@ package org.springframework.cloud.gateway.event;
 
 import org.springframework.context.ApplicationEvent;
 
+/**
+ * 缓存请求body的事件
+ *
+ * 当使用RetryGatewayFilterFactory路由过滤器时，会在该过滤器发送一个缓存请求body的事件
+ * 然后在全局过滤器AdaptCachedBodyGlobalFilter中会监听该事件，监听到之后会把该路由的请求body缓存起来，便于后面重试使用
+ */
 public class EnableBodyCachingEvent extends ApplicationEvent {
 
 	private final String routeId;
